@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>En Proceso - Progreso de Tareas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background-color: #0f172a; /* Mismo fondo oscuro (Slate 900) */
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            color: #f8fafc;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 10px 0 25px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        /* Botón de acción principal superior */
+        .btn-agregar {
+            background-color: #38bdf8; /* Azul principal */
+            color: #0f172a;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 36px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(56, 189, 248, 0.2);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn-agregar:hover {
+            background-color: #7dd3fc;
+            transform: translateY(-1px);
+        }
+
+        /* Caja de tareas unificada */
+        .caja-tarea {
+            width: 100%;
+            max-width: 650px;
+            background-color: #1e293b; /* Slate 800 */
+            border: 1px solid #334155;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+
+        .caja-tarea label {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .caja-tarea input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #f8fafc;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        .caja-tarea input[type="text"]:focus {
+            border-color: #38bdf8;
+        }
+
+        /* Botones de acción del formulario */
+        .botones-accion {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 8px;
+        }
+
+        .botones-accion button {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .btn-guardar { background-color: #38bdf8; color: #0f172a; }
+        .btn-guardar:hover { background-color: #7dd3fc; }
+        
+        .btn-editar { background-color: #334155; color: #94a3b8; border: 1px solid #475569 !important; }
+        .btn-editar:hover { background-color: #475569; color: #f8fafc; }
+        
+        .btn-borrar { background-color: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2) !important; }
+        .btn-borrar:hover { background-color: #ef4444; color: #fff; }
+
+        /* Contenedor del gráfico estadístico */
+        .grafico-container {
+            width: 100%;
+            max-width: 650px;
+            background-color: #1e293b; /* Slate 800 */
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+
+        .grafico-barras {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 220px;
+            margin-bottom: 24px;
+            gap: 12px;
+            padding: 0 10px;
+            border-bottom: 1px solid #334155;
+        }
+
+        /* Barras del gráfico rediseñadas con degradados sutiles de cian */
+        .barra {
+            width: 12%;
+            border-radius: 6px 6px 0 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 8px;
+            color: #0f172a;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: center;
+            background: linear-shadow;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
+        }
+
+        /* Alturas proporcionales basadas en tus datos usando paleta cian */
+        .barra-lun { background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 100%); height: 36%; }
+        .barra-mar { background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 100%); height: 56%; }
+        .barra-mie { background: linear-gradient(180deg, #bae6fd 0%, #7dd3fc 100%); height: 96%; }
+        .barra-jue { background: linear-gradient(180deg, #bae6fd 0%, #7dd3fc 100%); height: 88%; }
+        .barra-vie { background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 100%); height: 80%; }
+        .barra-sab { background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%); height: 64%; }
+        .barra-dom { background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%); height: 40%; }
+
+        /* Leyendas y etiquetas */
+        .leyenda {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            justify-content: center;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .leyenda span {
+            display: flex;
+            align-items: center;
+        }
+
+        .color-leyenda {
+            width: 12px;
+            height: 12px;
+            display: inline-block;
+            margin-right: 6px;
+            border-radius: 3px;
+        }
+
+        /* Botón Inferior para Volver al Inicio */
+        .boton-volver {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .boton-volver p {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #94a3b8;
+            margin: 0;
+            transition: color 0.2s;
+        }
+
+        .boton-volver:hover p {
+            color: #38bdf8;
+        }
+
+        .icono-casa {
+            width: 48px;
+            height: 48px;
+            background-color: #334155;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #475569;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .boton-volver:hover .icono-casa {
+            background-color: #475569;
+            transform: translateY(-2px);
+        }
+
+        .icono-casa::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background-color: #38bdf8;
+            clip-path: polygon(0% 60%, 15% 60%, 15% 100%, 85% 100%, 85% 60%, 100% 60%, 50% 0%);
+        }
+
+        /* Alerta de confirmación flotante */
+        .mensaje-confirmacion {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #22c55e; /* Verde moderno */
+            color: #0f172a;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+            z-index: 100;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>PROGRESO DE TAREAS</h1>
+
+    <button class="btn-agregar">AGREGAR TAREA</button>
+
+    <div class="caja-tarea">
+        <label for="nombreTarea">Nombre de la tarea:</label>
+        <input type="text" id="nombreTarea" placeholder="Escribe la tarea aquí...">
+        <div class="botones-accion">
+            <button class="btn-guardar" onclick="mostrarMensaje()">Guardar</button>
+            <button class="btn-editar" onclick="editarCampo()">Editar</button>
+            <button class="btn-borrar" onclick="borrarCampo()">Borrar</button>
+        </div>
+    </div>
+
+    <div class="grafico-container">
+        <div class="grafico-barras">
+            <div class="barra barra-lun">9<br>Lun</div>
+            <div class="barra barra-mar">7<br>Mar</div>
+            <div class="barra barra-mie">12<br>Mié</div>
+            <div class="barra barra-jue">15<br>Jue</div>
+            <div class="barra barra-vie">10<br>Vie</div>
+            <div class="barra barra-sab">8<br>Sáb</div>
+            <div class="barra barra-dom">5<br>Dom</div>
+        </div>
+        <div class="leyenda">
+            <span><span class="color-leyenda" style="background-color: #7dd3fc;"></span>Días laborables</span>
+            <span><span class="color-leyenda" style="background-color: #38bdf8;"></span>Pico de carga</span>
+            <span><span class="color-leyenda" style="background-color: #0284c7;"></span>Fin de semana</span>
+        </div>
+    </div>
+
+    <button class="boton-volver" onclick="window.location.href='inicio.html'">
+        <p>Volver al Inicio</p>
+        <div class="icono-casa"></div>
+    </button>
+
+    <div class="mensaje-confirmacion" id="mensajeConfirmacion">¡Tarea guardada correctamente!</div>
+
+    <script>
+        function mostrarMensaje() {
+            const input = document.getElementById('nombreTarea');
+            const mensaje = document.getElementById('mensajeConfirmacion');
+            if (input.value.trim() === '') {
+                alert('Por favor escribe una tarea primero');
+                return;
+            }
+            mensaje.style.display = 'block';
+            setTimeout(() => {
+                mensaje.style.display = 'none';
+            }, 3000);
+        }
+
+        function editarCampo() {
+            const input = document.getElementById('nombreTarea');
+            input.focus();
+        }
+
+        function borrarCampo() {
+            if (confirm('¿Seguro que deseas limpiar el campo?')) {
+                const input = document.getElementById('nombreTarea');
+                input.value = '';
+            }
+        }
+    </script>
+</body>
+</html>

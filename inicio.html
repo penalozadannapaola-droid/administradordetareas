@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background-color: #0f172a; /* Mismo fondo oscuro (Slate 900) */
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .contenedor-principal {
+            width: 100%;
+            max-width: 650px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 20px;
+        }
+
+        .boton-seccion {
+            background-color: #1e293b; /* Gris azulado oscuro (Slate 800) */
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            color: #f8fafc;
+            font-size: 1.2rem;
+            font-weight: 600;
+            min-height: 140px;
+        }
+
+        /* Efectos Hover idénticos a los anteriores */
+        .boton-seccion:hover {
+            transform: translateY(-3px);
+            background-color: #243249;
+            border-color: #38bdf8; /* Brillo azul al pasar el mouse */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 0 15px rgba(56, 189, 248, 0.15);
+        }
+
+        .boton-seccion:active {
+            transform: scale(0.98);
+        }
+
+        /* Contenedor del icono */
+        .icono-seccion {
+            width: 48px;
+            height: 48px;
+            background-color: #0f172a;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #334155;
+            transition: background-color 0.2s;
+        }
+
+        .boton-seccion:hover .icono-seccion {
+            background-color: #334155;
+        }
+
+        /* Figuras geométricas en azul cyan para simular iconos */
+        .icono-seccion::before {
+            content: '';
+            background-color: #38bdf8;
+        }
+
+        /* Icono Pendientes (Lista/Líneas) */
+        .icono-pendientes::before {
+            width: 18px;
+            height: 14px;
+            clip-path: polygon(0 0, 100% 0, 100% 20%, 0 20%, 0 40%, 100% 40%, 100% 60%, 0 60%, 0 80%, 100% 80%, 100% 100%, 0 100%);
+        }
+
+        /* Icono En Curso (Reloj/Círculo) */
+        .icono-curso::before {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 3px solid #38bdf8;
+            background-color: transparent;
+        }
+
+        /* Icono En Proceso (Engrane/Flechas) */
+        .icono-proceso::before {
+            width: 18px;
+            height: 18px;
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+        }
+
+        /* Icono Completadas (Check mark) */
+        .icono-completadas::before {
+            width: 16px;
+            height: 16px;
+            clip-path: polygon(14% 44%, 0 58%, 38% 95%, 100% 16%, 83% 0, 38% 66%);
+        }
+
+        /* Icono Mis Logros (Estrella) */
+        .icono-logros::before {
+            width: 20px;
+            height: 20px;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        }
+
+        /* Estructura responsiva de la cuadrícula */
+        .boton-seccion:nth-child(3), .boton-seccion:nth-child(5) {
+            grid-column: span 2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor-principal">
+        <button class="boton-seccion" onclick="window.location.href='Pendientes.html'">
+            <div class="icono-seccion icono-pendientes"></div>
+            Pendientes
+        </button>
+
+        <button class="boton-seccion" onclick="window.location.href='EnCurso.html'">
+            <div class="icono-seccion icono-curso"></div>
+            En Curso
+        </button>
+
+        <button class="boton-seccion" onclick="window.location.href='EnProceso.html'">
+            <div class="icono-seccion icono-proceso"></div>
+            En Proceso
+        </button>
+
+        <button class="boton-seccion" onclick="window.location.href='Completadas.html'">
+            <div class="icono-seccion icono-completadas"></div>
+            Completadas
+        </button>
+
+        <button class="boton-seccion" onclick="window.location.href='MisLogros.html'">
+            <div class="icono-seccion icono-logros"></div>
+            Mis Logros
+        </button>
+    </div>
+
+</body>
+</html>

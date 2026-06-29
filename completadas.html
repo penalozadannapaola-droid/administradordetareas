@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tareas Completadas - Historial Anual</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a; /* Fondo Slate 900 */
+            color: #f8fafc;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .titulo-principal {
+            color: #f8fafc;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 10px 0 30px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        /* Botón Guardar Superior Estilizado */
+        .boton-guardar {
+            position: absolute;
+            top: 35px;
+            right: 40px;
+            padding: 10px 24px;
+            background-color: #38bdf8; /* Azul Neón */
+            border: none;
+            border-radius: 8px;
+            color: #0f172a;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(56, 189, 248, 0.2);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .boton-guardar:hover {
+            background-color: #7dd3fc;
+            transform: translateY(-1px);
+        }
+
+        /* Contenedor responsivo para la tabla */
+        .tabla-wrapper {
+            width: 100%;
+            max-width: 1100px;
+            overflow-x: auto;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            background-color: #1e293b; /* Slate 800 */
+            margin-bottom: 40px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Estilos de la Matriz del Calendario */
+        .tabla-calendario {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px; /* Previene deformación en pantallas chicas */
+        }
+
+        .tabla-calendario th {
+            background-color: #1e293b;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 14px 10px;
+            text-align: center;
+            border-bottom: 2px solid #334155;
+            border-right: 1px solid #334155;
+        }
+
+        .tabla-calendario tbody th {
+            background-color: #1e293b;
+            color: #38bdf8; /* Resalta los días en azul */
+            border-right: 2px solid #334155;
+            text-align: left;
+            padding-left: 16px;
+            font-size: 0.85rem;
+        }
+
+        .tabla-calendario td {
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 12px;
+            border: 1px solid #334155;
+            min-width: 95px;
+            height: 75px;
+            vertical-align: top;
+            font-size: 0.9rem;
+            outline: none;
+            transition: background-color 0.15s, border-color 0.15s;
+        }
+
+        /* Indicador visual al editar celda */
+        .tabla-calendario td:focus {
+            background-color: #1e293b;
+            border-color: #38bdf8;
+            box-shadow: inset 0 0 0 1px #38bdf8;
+        }
+
+        /* Botón Inferior para Volver */
+        .boton-volver {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+
+        .boton-volver p {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #94a3b8;
+            margin: 0;
+            transition: color 0.2s;
+        }
+
+        .boton-volver:hover p {
+            color: #38bdf8;
+        }
+
+        .icono-casa {
+            width: 48px;
+            height: 48px;
+            background-color: #334155;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #475569;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .boton-volver:hover .icono-casa {
+            background-color: #475569;
+            transform: translateY(-2px);
+        }
+
+        .icono-casa::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background-color: #38bdf8;
+            clip-path: polygon(0% 60%, 15% 60%, 15% 100%, 85% 100%, 85% 60%, 100% 60%, 50% 0%);
+        }
+
+        /* Mensaje flotante moderno para feedback */
+        .toast-notificacion {
+            position: fixed;
+            bottom: 24px;
+            background-color: #22c55e;
+            color: #0f172a;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+            z-index: 100;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Ajustes adaptables básicos */
+        @media (max-width: 768px) {
+            .boton-guardar {
+                position: static;
+                margin-bottom: 20px;
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="titulo-principal">TAREAS COMPLETADAS</h1>
+    <button class="boton-guardar" onclick="guardarDatos(true)">Guardar</button>
+
+    <div class="tabla-wrapper">
+        <table class="tabla-calendario" id="tablaCalendario">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>ENERO</th>
+                    <th>FEBRERO</th>
+                    <th>MARZO</th>
+                    <th>ABRIL</th>
+                    <th>MAYO</th>
+                    <th>JUNIO</th>
+                    <th>JULIO</th>
+                    <th>AGOSTO</th>
+                    <th>SEPTIEMBRE</th>
+                    <th>OCTUBRE</th>
+                    <th>NOVIEMBRE</th>
+                    <th>DICIEMBRE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>LUNES</th>
+                    <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+                </tr>
+                <tr>
+                    <th>MARTES</th>
+                    <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+                </tr>
+                <tr>
+                    <th>MIÉRCOLES</th>
+                    <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+                </tr>
+                <tr>
+                    <th>JUEVES</th>
+                    <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+                </tr>
+                <tr>
+                    <th>VIERNES</th>
+                    <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+                </tr>
+                <tr>
+                    <th>SÁBADO</th>
+                    <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+                </tr>
+                <tr>
+                    <th>DOMINGO</th>
+                    <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button class="boton-volver" onclick="window.location.href='inicio.html'">
+        <p>Volver al Inicio</p>
+        <div class="icono-casa"></div>
+    </button>
+
+    <div class="toast-notificacion" id="toastNotificacion">¡Cambios guardados con éxito!</div>
+
+    <script>
+        const tabla = document.getElementById('tablaCalendario');
+        const toast = document.getElementById('toastNotificacion');
+        const observador = new MutationObserver(() => guardarDatos(false));
+        
+        function guardarDatos(manual = false) {
+            const datos = [];
+            const filas = tabla.querySelectorAll('tbody tr');
+            
+            filas.forEach(fila => {
+                const dia = fila.querySelector('th').textContent;
+                const celdas = fila.querySelectorAll('td');
+                const meses = [];
+                celdas.forEach(celda => meses.push(celda.textContent.trim()));
+                datos.push({ dia, meses });
+            });
+            
+            localStorage.setItem('tareasCompletadas', JSON.stringify(datos));
+            
+            if (manual) {
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 2500);
+            }
+        }
+
+        function cargarDatos() {
+            const datosGuardados = localStorage.getItem('tareasCompletadas');
+            if (datosGuardados) {
+                const datos = JSON.parse(datosGuardados);
+                const filas = tabla.querySelectorAll('tbody tr');
+                datos.forEach((item, indice) => {
+                    if(filas[indice]) {
+                        const celdas = filas[indice].querySelectorAll('td');
+                        item.meses.forEach((texto, celdaIndice) => {
+                            if(celdas[celdaIndice]) {
+                                celdas[celdaIndice].textContent = texto;
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        observador.observe(tabla, { childList: true, subtree: true, characterData: true });
+        window.onload = cargarDatos;
+    </script>
+</body>
+</html>

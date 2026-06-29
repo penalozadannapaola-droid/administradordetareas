@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>En Curso - Tablero de Tareas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background-color: #0f172a; /* Mismo fondo oscuro (Slate 900) */
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Indicador decorativo tecnológico superior */
+        .decoracion-superior {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0 30px;
+        }
+
+        .decoracion-item {
+            width: 12px;
+            height: 12px;
+            background-color: #334155;
+            border-radius: 50%;
+        }
+        
+        .decoracion-item:nth-child(1) { background-color: #ef4444; }
+        .decoracion-item:nth-child(2) { background-color: #eab308; }
+        .decoracion-item:nth-child(3) { background-color: #22c55e; }
+
+        /* Botón de acción principal superior */
+        .seccion-editar {
+            background-color: #38bdf8; /* Azul principal */
+            color: #0f172a;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 14px 36px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(56, 189, 248, 0.2);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .seccion-editar:hover {
+            background-color: #7dd3fc;
+            transform: translateY(-1px);
+        }
+
+        /* Formulario desplegable para añadir tareas */
+        .nueva-tarea-container {
+            width: 100%;
+            max-width: 550px;
+            background-color: #1e293b; /* Slate 800 */
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .nueva-tarea-input, .nueva-tarea-textarea, .nueva-tarea-container select {
+            width: 100%;
+            padding: 12px;
+            background-color: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: #f8fafc;
+            outline: none;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .nueva-tarea-input:focus, .nueva-tarea-textarea:focus, .nueva-tarea-container select:focus {
+            border-color: #38bdf8;
+        }
+
+        .nueva-tarea-textarea {
+            resize: none;
+            min-height: 80px;
+        }
+
+        .nueva-tarea-acciones {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .boton-accion {
+            background-color: #38bdf8;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            color: #0f172a;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background-color 0.2s;
+        }
+
+        .boton-accion:hover {
+            background-color: #7dd3fc;
+        }
+
+        .boton-cancelar {
+            background-color: #334155;
+            color: #94a3b8;
+        }
+
+        .boton-cancelar:hover {
+            background-color: #475569;
+            color: #f8fafc;
+        }
+
+        /* Contenedores generales de secciones Kanban */
+        .contenedor-seccion {
+            width: 100%;
+            max-width: 550px;
+            margin-bottom: 35px;
+        }
+
+        .titulo-seccion {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            border-left: 3px solid #38bdf8;
+            padding-left: 10px;
+        }
+
+        .contenedor-tareas-pequenas {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        /* Tarjetas de tareas minimalistas */
+        .tarea-principal, .tarea-pequena {
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 16px;
+            background-color: #1e293b;
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, border-color 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .tarea-principal:hover, .tarea-pequena:hover {
+            border-color: #475569;
+            transform: translateY(-1px);
+        }
+
+        .contenido-tarea {
+            width: 100%;
+            min-height: 40px;
+            padding: 0;
+            border: none;
+            resize: none;
+            outline: none;
+            font-size: 1rem;
+            color: #f8fafc;
+            background: transparent;
+            box-sizing: border-box;
+            line-height: 1.5;
+        }
+
+        /* Colores dinámicos para los estados */
+        .estado-tarea { color: #22c55e; }
+        .estado-pendiente { color: #ef4444; }
+        .estado-en-curso { color: #f59e0b; }
+
+        /* Barra de acciones inferior de la tarjeta */
+        .meta-tarea {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+            border-top: 1px solid #334155;
+            padding-top: 12px;
+        }
+
+        .opcion-eliminar {
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+
+        .opcion-eliminar:hover {
+            color: #ef4444;
+            text-decoration: underline;
+        }
+
+        .estado-selector {
+            border: 1px solid #334155;
+            border-radius: 6px;
+            outline: none;
+            background: #0f172a;
+            color: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            cursor: pointer;
+        }
+
+        /* Botón Inferior de Volver */
+        .boton-volver-inicio {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        .texto-volver {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #94a3b8;
+            margin: 0;
+            transition: color 0.2s;
+        }
+
+        .boton-volver-inicio:hover .texto-volver {
+            color: #38bdf8;
+        }
+
+        .icono-casa {
+            width: 48px;
+            height: 48px;
+            background-color: #334155;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #475569;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .boton-volver-inicio:hover .icono-casa {
+            background-color: #475569;
+            transform: translateY(-2px);
+        }
+
+        .icono-casa::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background-color: #38bdf8;
+            clip-path: polygon(0% 60%, 15% 60%, 15% 100%, 85% 100%, 85% 60%, 100% 60%, 50% 0%);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="decoracion-superior">
+        <div class="decoracion-item"></div>
+        <div class="decoracion-item"></div>
+        <div class="decoracion-item"></div>
+    </div>
+
+    <div class="seccion-editar" onclick="toggleNuevaTarea()">AÑADIR TAREA</div>
+
+    <div class="nueva-tarea-container" id="nuevaTareaContainer">
+        <input type="text" class="nueva-tarea-input" id="nuevaTareaTitulo" placeholder="Título de la tarea" required>
+        <textarea class="nueva-tarea-textarea" id="nuevaTareaContenido" placeholder="Descripción o contenido de la tarea..."></textarea>
+        <select id="nuevaTareaEstado">
+            <option value="pendiente">❌ Pendiente</option>
+            <option value="en-curso" selected>⟳ En Curso</option>
+            <option value="completado">✓ Completado</option>
+        </select>
+        <div class="nueva-tarea-acciones">
+            <button class="boton-accion boton-cancelar" onclick="toggleNuevaTarea()">Cancelar</button>
+            <button class="boton-accion" onclick="agregarNuevaTarea()">Guardar Tarea</button>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: EN CURSO -->
+    <div class="contenedor-seccion">
+        <h2 class="titulo-seccion">En Curso</h2>
+        <div class="contenedor-tareas-pequenas" id="tareasEnCurso">
+            <div class="tarea-pequena">
+                <textarea class="contenido-tarea" placeholder="Escribe aquí...">Tarea Principal Ejemplo</textarea>
+                <div class="meta-tarea">
+                    <span class="opcion-eliminar" onclick="eliminarTarea(this)">Eliminar</span>
+                    <select class="estado-selector estado-en-curso" onchange="moverTareaSegunEstado(this)">
+                        <option value="completado">✓ Completado</option>
+                        <option value="pendiente">❌ Pendiente</option>
+                        <option value="en-curso" selected>⟳ En Curso</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: PENDIENTES -->
+    <div class="contenedor-seccion">
+        <h2 class="titulo-seccion">Pendientes</h2>
+        <div class="contenedor-tareas-pequenas" id="tareasPendientes">
+            <div class="tarea-pequena">
+                <textarea class="contenido-tarea" placeholder="Escribe aquí...">Tarea Pendiente 1</textarea>
+                <div class="meta-tarea">
+                    <span class="opcion-eliminar" onclick="eliminarTarea(this)">Eliminar</span>
+                    <select class="estado-selector estado-pendiente" onchange="moverTareaSegunEstado(this)">
+                        <option value="completado">✓ Completado</option>
+                        <option value="pendiente" selected>❌ Pendiente</option>
+                        <option value="en-curso">⟳ En Curso</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: COMPLETADAS -->
+    <div class="contenedor-seccion">
+        <h2 class="titulo-seccion">Completadas</h2>
+        <div class="contenedor-tareas-pequenas" id="tareasCompletadas">
+            <div class="tarea-pequena">
+                <textarea class="contenido-tarea" placeholder="Escribe aquí...">Tarea Completada 1</textarea>
+                <div class="meta-tarea">
+                    <span class="opcion-eliminar" onclick="eliminarTarea(this)">Eliminar</span>
+                    <select class="estado-selector estado-tarea" onchange="moverTareaSegunEstado(this)">
+                        <option value="completado" selected>✓ Completado</option>
+                        <option value="pendiente">❌ Pendiente</option>
+                        <option value="en-curso">⟳ En Curso</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="boton-volver-inicio" onclick="window.location.href='inicio.html'">
+        <p class="texto-volver">Volver al Inicio</p>
+        <div class="icono-casa"></div>
+    </button>
+
+    <script>
+        function toggleNuevaTarea() {
+            const contenedor = document.getElementById('nuevaTareaContainer');
+            contenedor.style.display = contenedor.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function agregarNuevaTarea() {
+            const titulo = document.getElementById('nuevaTareaTitulo').value.trim();
+            const contenido = document.getElementById('nuevaTareaContenido').value.trim();
+            const estado = document.getElementById('nuevaTareaEstado').value;
+
+            if (!titulo) {
+                alert('Debes escribir un título para la tarea!');
+                return;
+            }
+
+            const nuevaTarea = document.createElement('div');
+            nuevaTarea.className = 'tarea-pequena';
+            
+            let estadoClase = '';
+            if (estado === 'pendiente') estadoClase = 'estado-pendiente';
+            else if (estado === 'en-curso') estadoClase = 'estado-en-curso';
+            else estadoClase = 'estado-tarea';
+
+            nuevaTarea.innerHTML = `
+                <textarea class="contenido-tarea" placeholder="Escribe aquí...">${contenido || titulo}</textarea>
+                <div class="meta-tarea">
+                    <span class="opcion-eliminar" onclick="eliminarTarea(this)">Eliminar</span>
+                    <select class="estado-selector ${estadoClase}" onchange="moverTareaSegunEstado(this)">
+                        <option value="completado" ${estado === 'completado' ? 'selected' : ''}>✓ Completado</option>
+                        <option value="pendiente" ${estado === 'pendiente' ? 'selected' : ''}>❌ Pendiente</option>
+                        <option value="en-curso" ${estado === 'en-curso' ? 'selected' : ''}>⟳ En Curso</option>
+                    </select>
+                </div>
+            `;
+
+            const idDestino = `tareas${estado.charAt(0).toUpperCase() + estado.slice(1)}`;
+            document.getElementById(idDestino).appendChild(nuevaTarea);
+            
+            toggleNuevaTarea();
+            document.getElementById('nuevaTareaTitulo').value = '';
+            document.getElementById('nuevaTareaContenido').value = '';
+        }
+
+        function moverTareaSegunEstado(elemento) {
+            const nuevoEstado = elemento.value;
+            const tarea = elemento.closest('.tarea-pequena') || elemento.closest('.tarea-principal');
+            let estadoClase = '';
+
+            switch(nuevoEstado) {
+                case 'pendiente':
+                    estadoClase = 'estado-pendiente';
+                    break;
+                case 'en-curso':
+                    estadoClase = 'estado-en-curso';
+                    break;
+                case 'completado':
+                    estadoClase = 'estado-tarea';
+                    break;
+            }
+
+            elemento.className = `estado-selector ${estadoClase}`;
+            const idDestino = `tareas${nuevoEstado.charAt(0).toUpperCase() + nuevoEstado.slice(1)}`;
+            document.getElementById(idDestino).appendChild(tarea);
+        }
+
+        function eliminarTarea(elemento) {
+            if (confirm('¿Seguro que quieres eliminar esta tarea?')) {
+                const tarjeta = elemento.closest('.tarea-pequena') || elemento.closest('.tarea-principal');
+                tarjeta.remove();
+            }
+        }
+    </script>
+</body>
+</html>

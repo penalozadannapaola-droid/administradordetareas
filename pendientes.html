@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tareas Pendientes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a; /* Fondo oscuro moderno (Slate 900) */
+            color: #f8fafc;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Contenedor de los días en scroll horizontal / responsivo */
+        .dias-container {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 40px;
+            padding-bottom: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: #334155 #1e293b;
+        }
+
+        /* Estilos de la barra de desplazamiento */
+        .dias-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .dias-container::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        .dias-container::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        .dia-columna {
+            flex: 1;
+            min-width: 150px;
+            min-height: 350px;
+            background-color: #1e293b; /* Gris azulado oscuro (Slate 800) */
+            border-radius: 12px;
+            border: 1px solid #334155;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .dia-titulo {
+            background-color: #334155;
+            color: #38bdf8; /* Azul neón / Cyan para resaltar el día */
+            padding: 12px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #475569;
+        }
+
+        .dia-tareas {
+            flex-grow: 1;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+        }
+
+        /* Estilo de cada tarjeta de tarea */
+        .tarea-item {
+            padding: 10px 12px;
+            background-color: #475569; /* Slate 600 */
+            color: #f8fafc;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            border-left: 4px solid #38bdf8; /* Detalle estético en azul */
+            word-break: break-word;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .tarea-item:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Formulario de agregar tareas */
+        .form-agregar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            background-color: #1e293b;
+            padding: 16px;
+            border-radius: 14px;
+            border: 1px solid #334155;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            margin-bottom: 40px;
+        }
+
+        .form-agregar input {
+            flex-grow: 1;
+            padding: 10px 14px;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background-color: #0f172a;
+            color: #f8fafc;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-agregar input:focus {
+            border-color: #38bdf8;
+        }
+
+        .form-agregar select {
+            padding: 10px 14px;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background-color: #0f172a;
+            color: #f8fafc;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .form-agregar select:focus {
+            border-color: #38bdf8;
+        }
+
+        .form-agregar button {
+            padding: 10px 20px;
+            background-color: #38bdf8;
+            border: none;
+            border-radius: 8px;
+            color: #0f172a;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .form-agregar button:hover {
+            background-color: #7dd3fc;
+        }
+
+        .form-agregar button:active {
+            transform: scale(0.98);
+        }
+
+        /* Botón inferior de navegación */
+        .boton-volver {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .boton-volver p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .icono-casa {
+            width: 48px;
+            height: 48px;
+            background-color: #334155;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #475569;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .icono-casa:hover {
+            background-color: #475569;
+            transform: translateY(-2px);
+        }
+
+        .icono-casa::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background-color: #38bdf8;
+            clip-path: polygon(0% 60%, 15% 60%, 15% 100%, 85% 100%, 85% 60%, 100% 60%, 50% 0%);
+        }
+    </style>
+</head>
+<body>
+    <div class="dias-container">
+        <div class="dia-columna">
+            <div class="dia-titulo">LUNES</div>
+            <div id="tareas-LUNES" class="dia-tareas"></div>
+        </div>
+        <div class="dia-columna">
+            <div class="dia-titulo">MARTES</div>
+            <div id="tareas-MARTES" class="dia-tareas"></div>
+        </div>
+        <div class="dia-columna">
+            <div class="dia-titulo">MIÉRCOLES</div>
+            <div id="tareas-MIERCOLES" class="dia-tareas"></div>
+        </div>
+        <div class="dia-columna">
+            <div class="dia-titulo">JUEVES</div>
+            <div id="tareas-JUEVES" class="dia-tareas"></div>
+        </div>
+        <div class="dia-columna">
+            <div class="dia-titulo">VIERNES</div>
+            <div id="tareas-VIERNES" class="dia-tareas"></div>
+        </div>
+        <div class="dia-columna">
+            <div class="dia-titulo">SÁBADO</div>
+            <div id="tareas-SABADO" class="dia-tareas"></div>
+        </div>
+        <div class="dia-columna">
+            <div class="dia-titulo">DOMINGO</div>
+            <div id="tareas-DOMINGO" class="dia-tareas"></div>
+        </div>
+    </div>
+
+    <div class="form-agregar">
+        <input type="text" id="nuevaTarea" placeholder="Escribe una nueva tarea..." onkeydown="if(event.key === 'Enter') agregarYGuardarTarea()">
+        <select id="diaSeleccionado">
+            <option value="LUNES">Lunes</option>
+            <option value="MARTES">Martes</option>
+            <option value="MIERCOLES">Miércoles</option>
+            <option value="JUEVES">Jueves</option>
+            <option value="VIERNES">Viernes</option>
+            <option value="SABADO">Sábado</option>
+            <option value="DOMINGO">Domingo</option>
+        </select>
+        <button onclick="agregarYGuardarTarea()">Guardar</button>
+    </div>
+
+    <div class="boton-volver">
+        <p>Volver al Inicio</p>
+        <button class="icono-casa" onclick="window.location.href='inicio.html'"></button>
+    </div>
+
+    <script>
+        function agregarYGuardarTarea() {
+            const texto = document.getElementById('nuevaTarea').value.trim();
+            const dia = document.getElementById('diaSeleccionado').value;
+            
+            if (!texto) {
+                alert('Escribe una tarea primero');
+                return;
+            }
+
+            const contenedor = document.getElementById(`tareas-${dia}`);
+            const tarea = document.createElement('div');
+            tarea.className = 'tarea-item';
+            tarea.textContent = texto;
+            contenedor.appendChild(tarea);
+            document.getElementById('nuevaTarea').value = '';
+            guardarDatosAutomatico();
+        }
+
+        function guardarDatosAutomatico() {
+            const dias = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO'];
+            const datos = {};
+
+            dias.forEach(dia => {
+                const tareasElementos = document.querySelectorAll(`#tareas-${dia} .tarea-item`);
+                const tareasTexto = [];
+                tareasElementos.forEach(item => tareasTexto.push(item.textContent.trim()));
+                datos[dia] = tareasTexto;
+            });
+
+            localStorage.setItem('tareasPendientes', JSON.stringify(datos));
+        }
+
+        function cargarDatosGuardados() {
+            const datosGuardados = localStorage.getItem('tareasPendientes');
+            if (datosGuardados) {
+                const datos = JSON.parse(datosGuardados);
+                for (const dia in datos) {
+                    const contenedor = document.getElementById(`tareas-${dia}`);
+                    if (contenedor) {
+                        datos[dia].forEach(texto => {
+                            const tarea = document.createElement('div');
+                            tarea.className = 'tarea-item';
+                            tarea.textContent = texto;
+                            contenedor.appendChild(tarea);
+                        });
+                    }
+                }
+            }
+        }
+
+        const observador = new MutationObserver(guardarDatosAutomatico);
+        const diasContenedores = document.querySelectorAll('.dia-tareas');
+        diasContenedores.forEach(contenedor => {
+            observador.observe(contenedor, { childList: true, subtree: true, characterData: true });
+        });
+
+        window.onload = cargarDatosGuardados;
+    </script>
+</body>
+</html>

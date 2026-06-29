@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Organizador de Tareas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #0f172a; /* Mismo fondo oscuro (Slate 900) */
+            color: #f8fafc;
+            padding: 40px 20px;
+        }
+
+        /* Logotipo estilizado adaptado al nuevo diseño */
+        .logo-hello-registro {
+            width: 180px;
+            height: 180px;
+            margin-bottom: 30px;
+            background: #1e293b; /* Slate 800 */
+            border-radius: 20px;
+            position: relative;
+            border: 1px solid #334155;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Círculo central iluminado en azul */
+        .logo-hello-registro::before {
+            content: '';
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            background: #0f172a;
+            border-radius: 50%;
+            border: 3px solid #38bdf8; /* Azul neón */
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+
+        /* Detalle estético superior derecho */
+        .logo-hello-registro::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            right: 28px;
+            width: 28px;
+            height: 28px;
+            background: #38bdf8; 
+            border-radius: 8px;
+            transform: rotate(45deg);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+        }
+
+        /* Contenedor del Formulario */
+        .form-registro {
+            width: 100%;
+            max-width: 500px;
+            background-color: #1e293b; /* Slate 800 */
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 35px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-registro label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #94a3b8; /* Gris claro para las etiquetas */
+            margin-bottom: 8px;
+            display: block;
+            letter-spacing: 0.5px;
+        }
+
+        .form-registro input {
+            width: 100%;
+            height: 48px;
+            background: #0f172a; /* Fondo inputs oscuro */
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 0 16px;
+            font-size: 0.95rem;
+            color: #f8fafc;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        /* Estilo especial para el input de tipo fecha (calendar) en modo oscuro */
+        .form-registro input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1); /* Hace que el icono del calendario sea blanco */
+            cursor: pointer;
+        }
+
+        .form-registro input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+        }
+
+        /* Botón de Registro Principal */
+        .boton-registro {
+            width: 100%;
+            height: 54px;
+            background: #38bdf8; /* Azul principal */
+            color: #0f172a;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px -1px rgba(56, 189, 248, 0.2);
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+        }
+
+        .boton-registro:hover {
+            background-color: #7dd3fc;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(56, 189, 248, 0.3);
+        }
+
+        .boton-registro:active {
+            transform: scale(0.99);
+        }
+
+        /* Enlace para regresar */
+        .enlace-volver {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #38bdf8;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .enlace-volver:hover {
+            color: #7dd3fc;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-hello-registro"></div>
+    
+    <form class="form-registro" action="inicio.html" method="get">
+        <div>
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" required>
+        </div>
+        <div>
+            <label for="correo">Correo electrónico</label>
+            <input type="email" id="correo" name="correo" required>
+        </div>
+        <div>
+            <label for="usuario">Nombre de usuario</label>
+            <input type="text" id="usuario" name="usuario" required>
+        </div>
+        <div>
+            <label for="pass">Contraseña</label>
+            <input type="password" id="pass" name="pass" required>
+        </div>
+        <div>
+            <label for="grado">Grado de estudio</label>
+            <input type="text" id="grado" name="grado" required>
+        </div>
+        <div>
+            <label for="fecha">Fecha de nacimiento</label>
+            <input type="date" id="fecha" name="fecha" required>
+        </div>
+        <button type="submit" class="boton-registro">Completar Registro</button>
+    </form>
+
+    <a href="index.html" class="enlace-volver">Volver al Inicio</a>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizador de tareas - Inicio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #0f172a; /* Mismo fondo oscuro (Slate 900) */
+            color: #f8fafc;
+            padding: 20px;
+        }
+
+        /* Logotipo estilizado adaptado al nuevo diseño */
+        .logo-hello {
+            width: 280px;
+            height: 280px;
+            margin-bottom: 50px;
+            background: #1e293b; /* Slate 800 */
+            border-radius: 24px;
+            position: relative;
+            border: 1px solid #334155;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Círculo central iluminado en azul */
+        .logo-hello::before {
+            content: '';
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            background: #0f172a;
+            border-radius: 50%;
+            border: 4px solid #38bdf8; /* Azul neón */
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+        }
+
+        /* Detalle estético superior en lugar del moño rosa */
+        .logo-hello::after {
+            content: '';
+            position: absolute;
+            top: 45px;
+            right: 45px;
+            width: 45px;
+            height: 45px;
+            background: #38bdf8; 
+            border-radius: 12px;
+            transform: rotate(45px);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+
+        /* Botones adaptados con los nuevos tamaños y estilos */
+        .boton {
+            width: 100%;
+            max-width: 400px;
+            height: 65px;
+            line-height: 65px;
+            background-color: #38bdf8; /* Azul principal */
+            color: #0f172a; /* Texto oscuro para contraste */
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-align: center;
+            border-radius: 14px;
+            text-decoration: none;
+            display: block;
+            margin: 12px 0;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(56, 189, 248, 0.2);
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+        }
+
+        /* El botón secundario (Registrarte) tiene un diseño de borde transparente */
+        .boton.secundario {
+            background-color: transparent;
+            color: #38bdf8;
+            border: 2px solid #334155;
+            box-shadow: none;
+            line-height: 61px; /* Compensa el grosor del borde */
+        }
+
+        /* Efectos hover */
+        .boton:hover {
+            background-color: #7dd3fc;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(56, 189, 248, 0.3);
+        }
+
+        .boton.secundario:hover {
+            background-color: #1e293b;
+            border-color: #38bdf8;
+            color: #7dd3fc;
+            box-shadow: none;
+        }
+
+        /* Efecto al hacer clic */
+        .boton:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-hello"></div>
+    
+    <button class="boton" onclick="window.location.href='login.html'">Iniciar sesión</button>
+    <a href="registro.html" class="boton secretario secundario">Registrarte</a>
+
+</body>
+</html>
