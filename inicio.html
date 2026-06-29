@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Principal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body {
+            background-color: #0a1a2f;
+            color: #ffffff;
+            padding: 40px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .boton-fila {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        .boton-ancho {
+            grid-column: 1 / -1;
+        }
+        .boton {
+            background-color: #256399;
+            padding: 30px 15px;
+            border-radius: 15px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            border: 1px solid #4090d0;
+            transition: background 0.2s;
+        }
+        .boton:hover {
+            background-color: #3078b8;
+        }
+        .icono {
+            font-size: 30px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .volver {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            color: #64f0ff;
+            text-decoration: none;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Botones del menú -->
+    <div class="boton-fila">
+        <a href="pendientes.html" class="boton">
+            <span class="icono">☰</span>
+            Pendientes
+        </a>
+        <a href="encurso.html" class="boton">
+            <span class="icono">◯</span>
+            En Curso
+        </a>
+    </div>
+
+    <div class="boton-fila">
+        <a href="enproceso.html" class="boton boton-ancho">
+            <span class="icono">⬢</span>
+            En Proceso
+        </a>
+    </div>
+
+    <div class="boton-fila">
+        <a href="completadas.html" class="boton">
+            <span class="icono">✔</span>
+            Completadas
+        </a>
+    </div>
+
+    <div class="boton-fila">
+        <a href="mislogros.html" class="boton boton-ancho">
+            <span class="icono">★</span>
+            Mis Logros
+        </a>
+    </div>
+
+    <!-- Enlace para volver al inicio de sesión -->
+    <a href="index.html" class="volver">⬅ Volver al inicio</a>
+
+</body>
+</html>
